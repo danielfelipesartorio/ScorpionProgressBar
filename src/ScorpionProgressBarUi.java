@@ -17,7 +17,7 @@ import java.awt.geom.*;
 
 public class ScorpionProgressBarUi extends BasicProgressBarUI {
     private static final float ONE_OVER_SEVEN = 1f / 7;
-    private static final Color TRANPARENT = new Color(0, 0, 0, 0);
+    private static final Color TRANPARENT = new JBColor(new Color(0, 0, 0, 0), new Color(0, 0, 0, 0));
     private static final Color WHITE = new Color(255, 255, 255, 255);
     private static final Color HALFWHITE = new Color(255, 255, 255, 125);
     private static final Color QUARTERWHITE = new Color(255, 255, 255, 64);
@@ -256,12 +256,7 @@ public class ScorpionProgressBarUi extends BasicProgressBarUI {
         g2.setClip(oldClip);
     }
 
-    @Override
-    protected int getBoxLength(int availableLength, int otherDimension) {
-        return availableLength;
-    }
-
-    protected int getPeriodLength() {
+    private int getPeriodLength() {
         return JBUI.scale(16);
     }
 
