@@ -18,10 +18,6 @@ import java.awt.geom.*;
 public class ScorpionProgressBarUi extends BasicProgressBarUI {
     private static final float ONE_OVER_SEVEN = 1f / 7;
     private static final Color TRANPARENT = new JBColor(new Color(0, 0, 0, 0), new Color(0, 0, 0, 0));
-    private static final Color WHITE = new Color(255, 255, 255, 255);
-    private static final Color HALFWHITE = new Color(255, 255, 255, 125);
-    private static final Color QUARTERWHITE = new Color(255, 255, 255, 64);
-
 
     static {
     }
@@ -53,8 +49,8 @@ public class ScorpionProgressBarUi extends BasicProgressBarUI {
         });
     }
 
-    private volatile int offset = 0;
-    private volatile int offset2 = 0;
+    private int offset = 0;
+    private int offset2 = 0;
     private volatile int velocity = 10;
 
     @Override
@@ -72,10 +68,10 @@ public class ScorpionProgressBarUi extends BasicProgressBarUI {
 
         int w = c.getWidth();
         int h = c.getPreferredSize().height;
-        if (!isEven(c.getHeight() - h)) h++;
+        if (isOdd(c.getHeight() - h)) h++;
 
-        final float R = JBUI.scale(8f);
-        final float R2 = JBUI.scale(9f);
+        final float R = JBUI.scale(8);
+        final float R2 = JBUI.scale(9);
         final Area containingRoundRect = new Area(new RoundRectangle2D.Float(1f, 1f, w - 2f, h - 2f, R, R));
 
         final LinearGradientPaint baseRainbowPaint = new LinearGradientPaint(0, JBUI.scale(2), 0, h - JBUI.scale(6),
@@ -142,10 +138,10 @@ public class ScorpionProgressBarUi extends BasicProgressBarUI {
             velocity = -10;
         }
         Icon scaledIcon = velocity > 0 ? ((ScalableIcon) ScorpionIcons.SCORPION_CHAIN) : ((ScalableIcon) ScorpionIcons.CHAIN_VOLTA);
-        scaledIcon.paintIcon(progressBar, g, offset2 - JBUI.scale(1024-32), -JBUI.scale(6));
+        scaledIcon.paintIcon(progressBar, g, offset2 - JBUI.scale(ScorpionIcons.SCORPION_CHAIN.getIconWidth()-32), -JBUI.scale(6));
 
         //overlay
-        ScorpionIcons.SCORPION.paintIcon(progressBar, g, -JBUI.scale(0), 0);
+        ScorpionIcons.SCORPION.paintIcon(progressBar, g, JBUI.scale(0), 0);
         if (velocity >0 ){
             ScorpionIcons.SUB_INDO.paintIcon(progressBar, g, barRectWidth - JBUI.scale(32), 0);
         }
@@ -167,16 +163,15 @@ public class ScorpionProgressBarUi extends BasicProgressBarUI {
         Insets b = progressBar.getInsets(); // area for border
         int w = progressBar.getWidth();
         int h = progressBar.getPreferredSize().height;
-        if (!isEven(c.getHeight() - h)) h++;
+        if (isOdd(c.getHeight() - h)) h++;
 
-        int barRectWidth = w;//- (b.right + b.left);
         int barRectHeight = h;//- (b.top + b.bottom);
 
-        if (barRectWidth <= 0 || barRectHeight <= 0) {
+        if (w <= 0 || barRectHeight <= 0) {
             return;
         }
 
-        int amountFull = getAmountFull(b, barRectWidth, barRectHeight);
+        int amountFull = getAmountFull(b, w, barRectHeight);
 
         Container parent = c.getParent();
         Color background = parent != null ? parent.getBackground() : UIUtil.getPanelBackground();
@@ -187,9 +182,9 @@ public class ScorpionProgressBarUi extends BasicProgressBarUI {
             g.fillRect(0, 0, w, h);
         }
 
-        final float R = JBUI.scale(8f);
-        final float R2 = JBUI.scale(9f);
-        final float off = JBUI.scale(1f);
+        final float R = JBUI.scale(8);
+        final float R2 = JBUI.scale(9);
+        final float off = JBUI.scale(1);
 
         //background
         g2.translate(0, (c.getHeight() - h) / 2);
@@ -202,20 +197,20 @@ public class ScorpionProgressBarUi extends BasicProgressBarUI {
         g2.setPaint(new LinearGradientPaint(0, JBUI.scale(2), 0, h - JBUI.scale(6),
                 new float[]{ONE_OVER_SEVEN * 1, ONE_OVER_SEVEN * 2, ONE_OVER_SEVEN * 3, ONE_OVER_SEVEN * 4, ONE_OVER_SEVEN * 5, ONE_OVER_SEVEN * 6, ONE_OVER_SEVEN * 7},
                 new Color[]{TRANPARENT, TRANPARENT, TRANPARENT, TRANPARENT, TRANPARENT, TRANPARENT, TRANPARENT}));
-        g2.fill(new RoundRectangle2D.Float(2f * off, 2f * off, amountFull - JBUI.scale(5f), h - JBUI.scale(5f), JBUI.scale(7f), JBUI.scale(7f)));
+        g2.fill(new RoundRectangle2D.Float(2f * off, 2f * off, amountFull - JBUI.scale(5), h - JBUI.scale(5), JBUI.scale(7), JBUI.scale(7)));
         g2.translate(0, -(c.getHeight() - h) / 2);
 
         // Deal with possible text painting
         if (progressBar.isStringPainted()) {
             paintString(g, b.left, b.top,
-                    barRectWidth, barRectHeight,
+                    w, barRectHeight,
                     amountFull, b);
         }
         //button
-        ScorpionIcons.SCORPION_CHAIN.paintIcon(progressBar, g2, amountFull - JBUI.scale(1024-32), -JBUI.scale(6));
+        ScorpionIcons.SCORPION_CHAIN.paintIcon(progressBar, g2, amountFull - JBUI.scale(ScorpionIcons.SCORPION_CHAIN.getIconWidth()-32), -JBUI.scale(6));
 
         //overlay
-        ScorpionIcons.SCORPION.paintIcon(progressBar, g2, -JBUI.scale(0), 0);
+        ScorpionIcons.SCORPION.paintIcon(progressBar, g2, JBUI.scale(0), 0);
         config.restore();
     }
 
@@ -260,8 +255,8 @@ public class ScorpionProgressBarUi extends BasicProgressBarUI {
         return JBUI.scale(16);
     }
 
-    private static boolean isEven(int value) {
-        return value % 2 == 0;
+    private static boolean isOdd(int value) {
+        return value % 2 != 0;
     }
 
 }
